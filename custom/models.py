@@ -122,3 +122,37 @@ class User(
     def category_name(self):
         "Is the user has a category?"
         return self.category.name if self.category else ""
+
+
+class Address(models.Model):
+    first_name = models.CharField(max_length=150)
+    last_name = models.CharField(max_length=150)
+    email = models.EmailField(null=True, blank=True)
+    phone_number = models.CharField(max_length=25)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    address_line_1 = models.CharField(max_length=150)
+    address_line_2 = models.CharField(max_length=150, null=True, blank=True)
+    country = models.CharField(max_length=150, default="India")
+    state = models.CharField(max_length=150)
+    city = models.CharField(max_length=150)
+    zip_code = models.CharField(max_length=7)
+    default = models.BooleanField(default=False)
+    soft_delete = models.BooleanField(default=False)
+    cr_by = models.ForeignKey(User, on_delete=models.RESTRICT,
+                              related_name="address_cr_by", null=True, blank=True)
+    up_by = models.ForeignKey(User, on_delete=models.RESTRICT,
+                              related_name="address_up_by", null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.address_line_1}, {self.city}"
+
+    @property
+    def full_add(self):
+        return f"{self.address_line_1}, {self.address_line_2}, {self.city}"
+
+    @property
+    def full_name(self):
+        return f'{self.first_name} {self.last_name}'
+
+    class Meta:
+        verbose_name_plural = 'Addresses'
