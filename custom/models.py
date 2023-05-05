@@ -10,15 +10,13 @@ GENDER_CHOICES = (
     ('r', 'rather not say ')
 )
 
-
-class UserCategory(models.Model):
-    name = models.CharField(max_length=255)
-    soft_delete = models.BooleanField(default=False)
-    cr_date = models.DateTimeField(auto_now_add=True)
-    up_date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
+CATEGORY_CHOICES = (
+    ('d', 'Doctor'),
+    ('p', 'Patient'),
+    ('r', 'Receptionist'),
+    ('a', 'Admin'),
+    ('s', 'Staff'),
+)
 
 
 class UserManager(BaseUserManager):
@@ -85,8 +83,8 @@ class User(
     manager = models.BooleanField(default=False)  # a superuser
     username = None
 
-    category = models.ForeignKey(
-        UserCategory, on_delete=models.RESTRICT, related_name="user_category"
+    category = models.CharField(
+        max_length=20, choices=CATEGORY_CHOICES, default="p"
     )
     soft_delete = models.BooleanField(default=False)
     cr_by = models.ForeignKey(
