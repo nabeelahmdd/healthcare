@@ -4,6 +4,7 @@ from custom.serializers.user_serializer import (
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import mixins, viewsets
+from custom.models import User
 
 
 # Create your views here.
@@ -27,4 +28,5 @@ class RegisterView(
     mixins.CreateModelMixin,
     viewsets.GenericViewSet,
 ):
+    queryset = User.objects.filter(soft_delete=False)
     serializer_class = UserSerializer

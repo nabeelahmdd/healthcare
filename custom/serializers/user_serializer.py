@@ -2,6 +2,7 @@ from rest_framework import serializers
 from custom.models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth.password_validation import validate_password
+from base.models import Doctor
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -10,38 +11,41 @@ class UserSerializer(serializers.ModelSerializer):
         ('p', 'Patient'),
         ('r', 'Receptionist'),
     )
-    isAdmin = serializers.SerializerMethodField(read_only=True)
-    isSuperUser = serializers.SerializerMethodField(read_only=True)
-    isManager = serializers.SerializerMethodField(read_only=True)
     category = serializers.ChoiceField(choices=CATEGORY_CHOICES)
+    specialty = serializers.CharField(
+        max_length=250, required=False, write_only=True)
 
     class Meta:
         model = User
         fields = [
-            'id', 'email', 'isAdmin', 'first_name', 'last_name', 'password',
-            'isSuperUser', 'isManager', 'phone_number', 'category'
+            'id', 'email', 'first_name', 'last_name', 'password', 'phone_number',
+            'category', 'specialty'
         ]
+        extra_kwargs = {
+            'specialty': {'write_only': True}
+        }
 
     def validate_password(self, value):
         validate_password(value)
         return value
 
     def create(self, validated_data):
+        specialty_data = validated_data.pop('specialty', None)
+
+        if validated_data.get('category') == 'd' and specialty_data is None:
+            raise serializers.ValidationError(
+                "Specialty is required for doctors")
         user = User(**validated_data)
         user.is_active = False
         user.set_password(validated_data['password'])
         user.save()
 
+        if user.category == 'd' and specialty_data is not None:
+            doctor = Doctor.objects.create(
+                user=user, specialty=specialty_data, cr_by=user, up_by=user)
+            doctor.save()
+
         return user
-
-    def get_isAdmin(self, obj):
-        return obj.is_staff
-
-    def get_isSuperUser(self, obj):
-        return obj.is_superuser
-
-    def get_isManager(self, obj):
-        return obj.manager
 
 
 class UserSerializerWithToken(UserSerializer):

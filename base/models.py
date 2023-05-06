@@ -48,21 +48,9 @@ class Appointment(models.Model):
         return f"Appointment for {self.patient} with {self.doctor}"
 
 
-class Specialty(models.Model):
-    specialty = models.CharField(max_length=50)
-    soft_delete = models.BooleanField(default=False)
-    cr_by = models.ForeignKey(User, on_delete=models.RESTRICT,
-                              related_name="specialty_cr_by")
-    up_by = models.ForeignKey(User, on_delete=models.RESTRICT,
-                              related_name="specialty_up_by")
-
-    def _str_(self):
-        return self.specialty
-
-
 class Doctor(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    specialty = models.ForeignKey(Specialty, on_delete=models.CASCADE)
+    specialty = models.CharField(max_length=250, default='')
     soft_delete = models.BooleanField(default=False)
     cr_by = models.ForeignKey(User, on_delete=models.RESTRICT,
                               related_name="doctor_cr_by")
