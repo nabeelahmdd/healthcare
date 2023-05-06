@@ -9,7 +9,6 @@ class UserSerializer(serializers.ModelSerializer):
     CATEGORY_CHOICES = (
         ('d', 'Doctor'),
         ('p', 'Patient'),
-        ('r', 'Receptionist'),
     )
     category = serializers.ChoiceField(choices=CATEGORY_CHOICES)
 
@@ -17,8 +16,25 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             'id', 'email', 'first_name', 'last_name', 'password', 'phone_number',
-            'category'
+            'category', 'image', 'gender', 'date_of_birth', 'clinic'
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        view = self.context.get('view')
+
+        if 'view' in self.context and self.context['view'].action == 'create':
+            # Exclude fields for create view
+            self.fields.pop('image')
+            self.fields.pop('gender')
+            self.fields.pop('date_of_birth')
+            self.fields.pop('clinic')
+
+        if 'view' in self.context and self.context['view'].action == 'update':
+            # Exclude fields for update view
+            self.fields.pop('category')
+            self.fields.pop('clinic')
 
     def validate_password(self, value):
         validate_password(value)

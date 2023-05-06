@@ -30,7 +30,7 @@ class UserAPITestCase(TestCase):
             'first_name': fake.first_name(),
             'last_name': fake.last_name(),
             'phone_number': "9630856388",
-            'category': fake.random_element(elements=('p', 'r')),
+            'category': fake.random_element(elements=('p', 'd')),
             'is_active': True
         }
         self.user = User.objects.create_user(
