@@ -12,5 +12,5 @@ router.register('register', RegisterView,
 urlpatterns = [
     path('', include(router.urls)),
     path('login/', MyTokenObtainPairView.as_view(),
-         name='token_obtain_pair'),
+         name='login'),
 ]
