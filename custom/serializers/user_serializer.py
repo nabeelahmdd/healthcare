@@ -5,9 +5,15 @@ from django.contrib.auth.password_validation import validate_password
 
 
 class UserSerializer(serializers.ModelSerializer):
+    CATEGORY_CHOICES = (
+        ('d', 'Doctor'),
+        ('p', 'Patient'),
+        ('r', 'Receptionist'),
+    )
     isAdmin = serializers.SerializerMethodField(read_only=True)
     isSuperUser = serializers.SerializerMethodField(read_only=True)
     isManager = serializers.SerializerMethodField(read_only=True)
+    category = serializers.ChoiceField(choices=CATEGORY_CHOICES)
 
     class Meta:
         model = User
