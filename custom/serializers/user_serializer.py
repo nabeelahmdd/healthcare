@@ -12,38 +12,23 @@ class UserSerializer(serializers.ModelSerializer):
         ('r', 'Receptionist'),
     )
     category = serializers.ChoiceField(choices=CATEGORY_CHOICES)
-    specialty = serializers.CharField(
-        max_length=250, required=False, write_only=True)
 
     class Meta:
         model = User
         fields = [
             'id', 'email', 'first_name', 'last_name', 'password', 'phone_number',
-            'category', 'specialty'
+            'category'
         ]
-        extra_kwargs = {
-            'specialty': {'write_only': True}
-        }
 
     def validate_password(self, value):
         validate_password(value)
         return value
 
     def create(self, validated_data):
-        specialty_data = validated_data.pop('specialty', None)
-
-        if validated_data.get('category') == 'd' and specialty_data is None:
-            raise serializers.ValidationError(
-                "Specialty is required for doctors")
         user = User(**validated_data)
         user.is_active = False
         user.set_password(validated_data['password'])
         user.save()
-
-        if user.category == 'd' and specialty_data is not None:
-            doctor = Doctor.objects.create(
-                user=user, specialty=specialty_data, cr_by=user, up_by=user)
-            doctor.save()
 
         return user
 
