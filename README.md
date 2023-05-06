@@ -1,6 +1,6 @@
 # Healthcare Django Project
 
-This is a Django project for managing healthcare-related entities such as clinics, doctors, patients, appointments, and medical records.
+```This is a Django project for managing healthcare-related entities such as clinics, doctors, patients, appointments, and medical records.```
 
 ## Features
 
