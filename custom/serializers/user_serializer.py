@@ -50,14 +50,17 @@ class UserSerializer(serializers.ModelSerializer):
 
 class UserSerializerWithToken(UserSerializer):
     token = serializers.SerializerMethodField(read_only=True)
+    category = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = User
         fields = [
-            'id', 'email', 'first_name', 'last_name', 'isAdmin', 'image', 'token',
-            'isSuperUser', 'isManager'
+            'id', 'email', 'first_name', 'last_name', 'image', 'token', 'category'
         ]
 
     def get_token(self, obj):
         token = RefreshToken.for_user(obj)
         return str(token.access_token)
+
+    def get_category(self, obj):
+        return obj.get_category_display()

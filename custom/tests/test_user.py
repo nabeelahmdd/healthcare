@@ -30,7 +30,7 @@ class UserAPITestCase(TestCase):
             'first_name': fake.first_name(),
             'last_name': fake.last_name(),
             'phone_number': "9630856388",
-            'category': fake.random_element(elements=('d', 'p', 'r')),
+            'category': fake.random_element(elements=('p', 'r')),
             'is_active': True
         }
         self.user = User.objects.create_user(
@@ -42,6 +42,17 @@ class UserAPITestCase(TestCase):
 
     def test_user_registration_invalid_data(self):
         self.user_data['password'] = '123'
+        response = self.client.post(self.register_url, self.user_data)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_doctor_registration_valid_data(self):
+        self.user_data['category'] = 'd'
+        self.user_data['specialty'] = 'cardiologist'
+        response = self.client.post(self.register_url, self.user_data)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+    def test_doctor_registration_invalid_data(self):
+        self.user_data['category'] = 'd'
         response = self.client.post(self.register_url, self.user_data)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
