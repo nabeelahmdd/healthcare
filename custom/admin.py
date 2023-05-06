@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin.options import ModelAdmin
 from custom.models import (
-    User
+    User, Clinic
 )
 # Register your models here.
 
@@ -18,3 +18,17 @@ class UserAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User, UserAdmin)
+
+
+# Clinic register to admin
+class ClinicAdmin(admin.ModelAdmin):
+    list_display = (
+        'name', 'address_line_1', 'city', 'state', 'zip_code', 'country',
+    )
+    search_fields = (
+        'name', 'address_line_1', 'city', 'state', 'zip_code', 'country',
+    )
+    list_filter = ('name',)
+
+
+admin.site.register(Clinic, ClinicAdmin)
