@@ -144,6 +144,11 @@ class User(
         return self.manager
 
     @property
+    def is_doctor(self):
+        "Is the user a member of doctor?"
+        return True if self.category == "d" else False
+
+    @property
     def category_name(self):
         "Is the user has a category?"
         return self.category.name if self.category else ""
