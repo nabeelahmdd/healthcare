@@ -32,17 +32,27 @@ class Appointment(models.Model):
         ('R', 'Rescheduled'),
         ('X', 'Cancelled'),
     )
-    patient = models.ForeignKey(User, on_delete=models.CASCADE)
+    patient = models.ForeignKey(
+        User, on_delete=models.CASCADE, null=True, blank=True
+    )
     doctor = models.ForeignKey('Doctor', on_delete=models.CASCADE)
+    clinic = models.ForeignKey(
+        'custom.Clinic', on_delete=models.CASCADE,
+        null=True, blank=True
+    )
     date = models.DateField()
     time = models.TimeField()
     status = models.CharField(max_length=1, choices=STATUS_CHOICES)
     reason = models.TextField()
     soft_delete = models.BooleanField(default=False)
-    cr_by = models.ForeignKey(User, on_delete=models.RESTRICT,
-                              related_name="appointment_cr_by")
-    up_by = models.ForeignKey(User, on_delete=models.RESTRICT,
-                              related_name="appointment_up_by")
+    cr_by = models.ForeignKey(
+        User, on_delete=models.RESTRICT, related_name="appointment_cr_by",
+        null=True, blank=True
+    )
+    up_by = models.ForeignKey(
+        User, on_delete=models.RESTRICT, related_name="appointment_up_by",
+        null=True, blank=True
+    )
 
     def _str_(self):
         return f"Appointment for {self.patient} with {self.doctor}"
@@ -59,4 +69,4 @@ class Doctor(models.Model):
                               related_name="doctor_up_by")
 
     def _str_(self):
-        return f"{self.user.first_name} {self.user.last_name}, {self.specialty}"
+        return f"{self.user.first_name}"
