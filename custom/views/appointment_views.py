@@ -1,13 +1,13 @@
 from rest_framework import mixins, viewsets
 from custom.serializers import (
-    ClinicSerializer,
+    AppointmentSerializer,
 )
-from custom.models import Clinic
-from custom.permissions import IsDoctor
+from base.models import Appointment
+from rest_framework.permissions import IsAuthenticated
 from custom.mixins import CustomDestroyMixin
 
 
-class ClinicView(
+class AppointmentView(
     mixins.ListModelMixin,
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
@@ -16,23 +16,24 @@ class ClinicView(
     viewsets.GenericViewSet,
 ):
     """
-    only doctor can perform crud operation on clinic,
-    get clinic where soft_delete is False or doctor is associated with it
+    only doctor can perform crud operation on appointment,
+    get appointment where soft_delete is False or doctor is associated with it
     """
-    permission_classes = (IsDoctor,)
-    serializer_class = ClinicSerializer
+    permission_classes = (IsAuthenticated,)
+    serializer_class = AppointmentSerializer
 
     def get_queryset(self):
-        return Clinic.objects.filter(soft_delete=False,  user=self.request.user)
+        return Appointment.objects.filter(soft_delete=False,  patient=self.request.user)
 
     def perform_create(self, serializer):
         response = super().perform_create(serializer)
         instance = serializer.instance
 
         user = self.request.user
-        user.clinic = instance
-        user.save()
-        serializer.save(cr_by=user)
+        serializer.save(
+            cr_by=user, clinic=instance.doctor.user.clinic, status='P',
+            patient=user
+        )
 
     def perform_update(self, serializer):
         serializer.save(up_by=self.request.user)
