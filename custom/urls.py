@@ -1,14 +1,9 @@
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
-from custom.views.user_views import (
-    MyTokenObtainPairView, RegisterView,
+from custom.views import (
+    MyTokenObtainPairView, RegisterView, ClinicView, ReceptionistView, AppointmentView,
 )
-from custom.views.clinic_views import (
-    ClinicView
-)
-from custom.views.receptionist_views import (
-    ReceptionistView
-)
+
 router = DefaultRouter()
 
 router.register('register', RegisterView,
@@ -17,6 +12,8 @@ router.register('clinic', ClinicView,
                 basename='clinic')
 router.register('receptionist', ReceptionistView,
                 basename='receptionist')
+router.register('appointment', AppointmentView,
+                basename='appointment')
 urlpatterns = [
     path('', include(router.urls)),
     path('login/', MyTokenObtainPairView.as_view(),

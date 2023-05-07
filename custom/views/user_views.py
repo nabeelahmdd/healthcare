@@ -1,4 +1,4 @@
-from custom.serializers.user_serializer import (
+from custom.serializers import (
     UserSerializer, UserSerializerWithToken,
 )
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
