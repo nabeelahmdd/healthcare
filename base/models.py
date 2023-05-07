@@ -40,6 +40,10 @@ class Appointment(models.Model):
         'custom.Clinic', on_delete=models.CASCADE,
         null=True, blank=True
     )
+    availability = models.ForeignKey(
+        'Availability', on_delete=models.CASCADE,
+        null=True, blank=True
+    )
     date = models.DateField()
     time = models.TimeField()
     status = models.CharField(max_length=1, choices=STATUS_CHOICES)
@@ -67,6 +71,43 @@ class Doctor(models.Model):
                               related_name="doctor_cr_by")
     up_by = models.ForeignKey(User, on_delete=models.RESTRICT,
                               related_name="doctor_up_by")
+
+    def _str_(self):
+        return f"{self.user.first_name}"
+
+
+class Availability(models.Model):
+    ZONE_CHOICES = (
+        ('M', 'Morning'),
+        ('A', 'Afternoon'),
+        ('E', 'Evening'),
+        ('N', 'Night'),
+    )
+    DAY_CHOICES = (
+        ('mon', 'Monday'),
+        ('tue', 'Tuesday'),
+        ('wed', 'Wednesday'),
+        ('thu', 'Thursday'),
+        ('fri', 'Friday'),
+        ('sat', 'Saturday'),
+        ('sun', 'Sunday'),
+    )
+
+    day_of_week = models.CharField(max_length=3, choices=DAY_CHOICES)
+    zone = models.CharField(max_length=1, choices=ZONE_CHOICES)
+    start_time = models.TimeField()
+    end_time = models.TimeField()
+    is_booked = models.BooleanField(default=False)
+    doctor = models.ForeignKey(
+        Doctor, on_delete=models.RESTRICT, null=True, blank=True
+    )
+    soft_delete = models.BooleanField(default=False)
+    cr_by = models.ForeignKey(User, on_delete=models.RESTRICT,
+                              related_name="availability_cr_by",
+                              null=True, blank=True)
+    up_by = models.ForeignKey(User, on_delete=models.RESTRICT,
+                              related_name="availability_up_by",
+                              null=True, blank=True)
 
     def _str_(self):
         return f"{self.user.first_name}"

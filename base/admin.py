@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.admin.options import ModelAdmin
 from base.models import (
-    Doctor, Appointment
+    Doctor, Appointment, Availability
 )
 # Register your models here.
 
@@ -40,3 +40,5 @@ class AppointmentAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Appointment, AppointmentAdmin)
+
+admin.site.register(Availability)
